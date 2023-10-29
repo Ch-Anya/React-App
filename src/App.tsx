@@ -5,8 +5,8 @@ import MainResults from './components/main/MainResults.tsx'
 export default class App extends React.Component {
   render() {
     return <>
-    <SearchInput name={this.state.name} placeholder='test' />
-    <SearchBtn/>
+    <SearchInput placeholder={'test'} />
+    {/* <SearchBtn/> */}
     <MainResults/>
     </>
   }

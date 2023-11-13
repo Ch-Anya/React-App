@@ -1,17 +1,21 @@
 import React from 'react';
 import SearchBtn from './Search-btn';
 import Information from '../../interfaces/Information';
+import SearchResults from '../main/SearchResults';
+import MainResults from '../main/MainResults';
 interface Props {
   placeholder: string;
 }
 interface State {
-  results: string[];
+  show: boolean;
+  results: Information[];
   inputValue: string;
 }
 export default class SearchInput extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
+      show: true,
       results: [],
       inputValue: !localStorage.getItem('input')
         ? ''
@@ -22,6 +26,9 @@ export default class SearchInput extends React.Component<Props, State> {
   handleClick = () => {
     this.setLocalStorage();
     this.fetchInformation(this.state.inputValue);
+    this.setState({
+      show: false,
+    });
   };
   fetchInformation = (value: string) => {
     fetch('https://jsonplaceholder.typicode.com/users/8/posts')
@@ -35,7 +42,9 @@ export default class SearchInput extends React.Component<Props, State> {
             information.title.toLowerCase().includes(value)
           );
         });
-        this.setState(results);
+        this.setState({
+          results: results,
+        });
       });
   };
   setLocalStorage = () => {
@@ -54,6 +63,8 @@ export default class SearchInput extends React.Component<Props, State> {
           placeholder={this.props.placeholder}
         />
         <SearchBtn onClick={() => this.handleClick()} />
+        <SearchResults results={this.state.results} />
+        {this.state.show ? <MainResults /> : null}
       </>
     );
   }

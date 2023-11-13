@@ -12,23 +12,47 @@ export default class MainResults extends React.Component {
     items: [],
   };
   componentDidMount() {
-    this.setState({ ...this.state, isLoaded: true });
-    fetch('https://jsonplaceholder.typicode.com/users/8/posts')
-      .then((res) => res.json())
-      .then((result) => {
-        this.setState({
-          ...this.state,
-          isLoaded: false,
-          items: result,
+    let fetchInformation = (value: string) => {
+      this.setState({ ...this.state, isLoaded: true });
+      fetch('https://jsonplaceholder.typicode.com/users/8/posts')
+        .then((response) => response.json())
+        .then((res) => {
+          const results = res.filter((information: Information) => {
+            return (
+              value &&
+              information &&
+              information.title &&
+              information.title.toLowerCase().includes(value)
+            );
+          });
+          this.setState({
+            ...this.state,
+            isLoaded: false,
+            items: results,
+          });
         });
-      })
-      .catch((error) =>
-        this.setState({
-          ...this.state,
-          isLoaded: false,
-          error: error,
+    };
+    if (!localStorage.getItem('input')) {
+      this.setState({ ...this.state, isLoaded: true });
+      fetch('https://jsonplaceholder.typicode.com/users/8/posts')
+        .then((res) => res.json())
+        .then((result) => {
+          this.setState({
+            ...this.state,
+            isLoaded: false,
+            items: result,
+          });
         })
-      );
+        .catch((error) =>
+          this.setState({
+            ...this.state,
+            isLoaded: false,
+            error: error,
+          })
+        );
+    } else {
+      fetchInformation(JSON.parse(localStorage.getItem('input') || ''));
+    }
   }
   render() {
     const { error, isLoaded, items } = this.state;
